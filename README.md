@@ -29,7 +29,7 @@ To run the code, follow these steps:
 ## To-Do's 🏁
 
 1. Implement error handling for invalid URLs or non-JSON responses. ✔️
-2. Add logging functionality
+2. Add logging functionality ✔️
 3. Implement unit tests
 4. Enhance the code to handle pagination or large datasets incorparating pagination parameters in the API requests
 5. Add support for authentication if endpoints require authentication or api keys.

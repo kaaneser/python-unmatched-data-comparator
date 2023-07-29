@@ -1,6 +1,7 @@
 import sys
 import requests
 import json
+import logger
 
 # Retrieve values from the source endpoint
 def get_source(src_endpoint, src_key):
@@ -14,10 +15,10 @@ def get_source(src_endpoint, src_key):
         src_values = [item[src_key] for item in data]
         return src_values
     except requests.exceptions.RequestException as e:
-        print(f"Error - Unable to fetch data from the source endpoint: {e}")
+        logger.error(f"Error - Unable to fetch data from the source endpoint: {e}")
         sys.exit(1)
     except (json.JSONDecodeError, KeyError) as e:
-        print(f"Error - Invalid JSON data or key error in the source endpoint: {e}")
+        logger.error(f"Error - Invalid JSON data or key error in the source endpoint: {e}")
         sys.exit(1)
 
 # Compare values from the source with values from a compared endpoint
@@ -37,11 +38,11 @@ def compare(src_values, compared_endpoint, compared_key):
             if x not in src_values and x not in not_matched:
                 not_matched.add(x)
 
-        print(list(not_matched))
+        logger.info(f"Not matched values: {list(not_matched)}")
     except requests.exceptions.RequestException as e:
-        print(f"Error - Unable to fetch data from the compared endpoint: {e}")
+        logger.error(f"Error - Unable to fetch data from the compared endpoint: {e}")
     except (json.JSONDecodeError, KeyError) as e:
-        print(f"Error - Invalid JSON data or key error in the compared endpoint: {e}")
+        logger.error(f"Error - Invalid JSON data or key error in the compared endpoint: {e}")
         sys.exit(1)
 
 """
@@ -50,8 +51,9 @@ sys.argv[1:4] = [source endpoint, source key, endpoint to be compared, key to be
 """
 if __name__ == "__main__":
     if len(sys.argv) != 5:
-        print("Usage: python compare_data.py <source_endpoint> <source_key> <compared_endpoint> <compared_key>")
+        logger.error("Usage: python compare_data.py <source_endpoint> <source_key> <compared_endpoint> <compared_key>")
         sys.exit(1)
 
-    src = get_source(sys.argv[1], sys.argv[2])
-    compare(src, sys.argv[3], sys.argv[4])
+    logger = logger.setup_logger() # Get the configured logger
+    src = get_source(sys.argv[1], sys.argv[2], logger)
+    compare(src, sys.argv[3], sys.argv[4], logger)
